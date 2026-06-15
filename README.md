@@ -14,35 +14,31 @@ This is **app 2 of 2** — deploy the
 [API](https://github.com/dockhold/fullstack-api) first so you have its URL.
 
 1. Click **Use this template** (or fork this repo).
-2. Copy `.env.example` to `.env.production` and set `VITE_API_URL` to your
-   deployed API's URL. Commit it — Vite bakes it into the build.
-3. [Deploy it](https://app.dockhold.eu/new?repo=https://github.com/dockhold/fullstack-web).
+2. [Deploy it](https://app.dockhold.eu/new?repo=https://github.com/dockhold/fullstack-web).
    It builds from the [`Dockerfile`](Dockerfile) and goes live at its own URL.
-4. Back on the **API** app, set `ALLOWED_ORIGIN` to *this* app's URL and redeploy,
+3. In the dashboard, set the `API_URL` variable to your deployed API's URL, then
+   **restart** the app. That's it — no rebuild.
+4. Back on the **API** app, set `ALLOWED_ORIGIN` to *this* app's URL and restart,
    so the browser is allowed to call it (CORS).
 
-That last step is the two-pass part: the frontend needs the API URL at build
-time, and the API needs the frontend URL for CORS — so each learns the other's
-URL once it's deployed.
+## How the API URL works (runtime config)
 
-## How it works
+`API_URL` is read at **runtime**, not baked into the build — so you set it in the
+dashboard and restart, with no rebuild and nothing to commit. At container
+startup, [`entrypoint.sh`](entrypoint.sh) writes the dashboard's `API_URL` into
+`config.js`, which the page loads into `window.__APP_CONFIG__` before the app
+runs (see [`src/App.jsx`](src/App.jsx)).
 
-- `VITE_API_URL` (from `.env.production`) is inlined into the bundle at build
-  time — see [`src/App.jsx`](src/App.jsx). Dashboard variables can't reach a
-  pre-built static bundle, so this must be committed.
-- The app fetches `GET /api/messages` and posts to `POST /api/messages`.
-- It deploys via the [`Dockerfile`](Dockerfile) (build, then `serve -s dist` on
-  `$PORT`) — a built SPA needs a Dockerfile so it isn't served as raw source.
+This is the runtime-config pattern for a static SPA — it's why you can point the
+frontend at any API without rebuilding.
 
 ## Run it locally
 
 ```bash
 npm install
-# point at your local or deployed API:
-echo "VITE_API_URL=http://localhost:3000" > .env.production
+# set your API URL for local dev in public/config.js:
+#   window.__APP_CONFIG__ = { API_URL: "http://localhost:3000" };
 npm run dev      # http://localhost:5173
-# or test the production path:
-npm run build && PORT=5173 npm start
 ```
 
 ## Full walkthrough

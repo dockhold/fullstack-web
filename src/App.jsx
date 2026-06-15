@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 
-// The API base URL. VITE_ vars are inlined at build time, so commit this to a
-// .env.production — it's baked into the bundle when the Dockerfile builds.
-const API = import.meta.env.VITE_API_URL
+// The API base URL, read at RUNTIME from the config injected at container
+// startup (see public/config.js + entrypoint.sh). Set API_URL in the Dockhold
+// dashboard and restart — no rebuild needed.
+const API = (typeof window !== 'undefined' && window.__APP_CONFIG__ && window.__APP_CONFIG__.API_URL) || ''
 
 export default function App() {
   const [messages, setMessages] = useState([])
@@ -25,7 +26,7 @@ export default function App() {
 
   useEffect(() => {
     if (!API) {
-      setError('VITE_API_URL is not set')
+      setError('API_URL is not set')
       setLoading(false)
       return
     }
@@ -57,8 +58,8 @@ export default function App() {
 
       {!API && (
         <p className="error">
-          Set <code>VITE_API_URL</code> to your deployed API URL in a committed
-          <code>.env.production</code>, then rebuild.
+          Set <code>API_URL</code> to your deployed API URL in the dashboard
+          (Variables), then restart this app.
         </p>
       )}
       {error && API && <p className="error">Couldn't reach the API: {error}</p>}
