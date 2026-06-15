@@ -1,0 +1,9 @@
+node_modules/
+dist/
+# Ignore local env, but .env.production is committed on purpose: it holds the
+# public VITE_API_URL that gets baked into the build.
+.env
+.env.local
+.env*.local
+*.log
+.DS_Store
