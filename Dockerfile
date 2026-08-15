@@ -1,5 +1,5 @@
 # Build the app to static files
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # Serve the static build on the assigned port, with runtime API_URL injection
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 RUN npm install -g serve@14
 COPY --from=build /app/dist ./dist
