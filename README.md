@@ -6,7 +6,7 @@ Running the frontend and API as **two separate apps** (each its own URL) is the
 real shape of a production app — and a **Pro** plan feature, since it needs more
 than one app.
 
-[![Deploy to Dockhold](https://img.shields.io/badge/Deploy%20to-Dockhold-2563eb?style=for-the-badge)](https://app.dockhold.eu/new?repo=https://github.com/dockhold/fullstack-web)
+[![Deploy on Dockhold](https://dockhold.eu/button.svg)](https://app.dockhold.eu/new?repo=https://github.com/dockhold/fullstack-web&name=fullstack-web&ref=button)
 
 ## Deploy it
 
@@ -20,6 +20,15 @@ This is **app 2 of 2** — deploy the
    **restart** the app. That's it — no rebuild.
 4. Back on the **API** app, set `ALLOWED_ORIGIN` to *this* app's URL and restart,
    so the browser is allowed to call it (CORS).
+
+## Deploy with your AI tool
+
+Install the Dockhold plugin or MCP server in your AI coding tool
+([setup guide](https://dockhold.eu/docs/recipes/deploy-from-your-ai-tool)), then
+say "put this online" in a folder with this template. The tool signs you in
+through the browser once and reports the URL when the app is live.
+
+Or from a terminal: `npx dockhold login`, then `npx dockhold deploy`.
 
 ## How the API URL works (runtime config)
 
